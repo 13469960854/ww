@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>评论动态加载</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <script src="template.js"></script>
+    <script src="jquery.js"></script>
+    <script type="text/html" id="template">
+        {{each data.commentid as value}}
+        <li class="template">
+            <div class="left"><img src={{value.userinfo.head}}></div>
+            <div class="right">
+                <div><span>{{value.userinfo.nick}}</span>: <span>{{value.timeDifference}}</span></div>
+                <div>{{value.content}}</div>
+            </div>
+        </li>
+        <hr>
+        {{/each}}
+    </script>
+    <script type="text/javascript">
+    	$(function(){
+    		function ncomment(callback){
+    			$.ajax({
+    				type:'get',
+    				url:'http://coral.qq.com/article/1983169624/comment',
+    				data:{commentid: '6280346786642608295', reqnum: 20, tag: ''},
+    				dataType:'jsonp',
+    				jsonp:'callback',
+    				jsonpCallback:'mainComment',
+    				success:function(data){
+    					callback(data);
+    				}
+    			})
+    		}
+    		ncomment(function(data){
+    			var html = template('template', data);
+                $('#contentList').append(html);
+    		})
+    		$("#more").click(function(){
+    			ncomment(function (data) {
+                    var html = template('template', data);
+                    $('#contentList').append(html);
+                });
+    		})
+    	})
+
+    </script>
+</head>
+<body>
+<div style="height:300px;"></div>
+<div id="container">
+<ul id="contentList">
+    <li class="comment">
+        <div class="left"><img src="./g1.jpg"></div>
+        <div class="right">
+            <div><span>传智雷老师</span>: <span>昨天 19:08:33</span> </div>
+            <div>上述知情人士透露，目前业内一些公司准备了专门的名单从电信运营商定向挖人，其筹码是数倍于运营商的薪酬、股权激励以及企业运营决策的自主权。</div>
+        </div>
+    </li>
+    <hr>
+    <li class="comment">
+        <div class="left"><img src="./g1.jpg"></div>
+        <div class="right">
+            <div><span>传智喵喵喵</span>: <span>昨天 19:08:33</span> </div>
+            <div>上述知情人士透露，目前业内一些公司准备了专门的名单从电信运营商定向挖人，其筹码是数倍于运营商的薪酬、股权激励以及企业运营决策的自主权。</div>
+        </div>
+    </li>
+    <hr>
+</ul>
+<div id="more">加载更多...</div>
+<input type="hidden" id="last" value="0">
+</div>
+
+</body>
+</html>
